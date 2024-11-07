@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redondeo a Cifras Significativas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="shortcut icon" href="favicon.png">
+</head>
+<body>
+  <div class="container mx-auto p-4 text-center">
+    <h1 class="text-3xl font-bold mb-8 text-gray-800">Redondeo a 3 Cifras Significativas</h1>
+    <form id="round-form" class="mb-8">
+      <div id="input-container" class="mb-8 text-left">
+        <label class="block text-lg font-medium mb-2" for="number-1">Número 1:</label>
+        <input type="number" id="number-1" class="w-full p-2 border rounded mb-4 number-input outline-none focus:ring-2 focus:ring-green-600" placeholder="Ejemplo: 59.086230290721346">
+      </div>
+      <div class="flex justify-center items-center gap-4">
+        <button type="button" onclick="addInput()" class="bg-green-800 hover:bg-green-900 text-white font-bold py-2 px-6 rounded">Agregar otro número</button>
+        <button type="button" onclick="roundNumbers()" class="bg-green-800 hover:bg-green-900 text-white font-bold py-2 px-6 rounded">Redondear</button>
+      </div>
+    </form>
+    <div id="result" class="text-lg font-medium text-gray-700"></div>
+  </div>
+
+  <script>
+    let inputCount = 1;
+
+    function roundToSignificantFigures(number, significantFigures = 3) {
+      if (number == 0) {
+        return 0;
+      } else {
+        return parseFloat(number.toPrecision(significantFigures));
+      }
+    }
+
+    function addInput() {
+      inputCount++;
+      const inputContainer = document.getElementById("input-container");
+      const newLabel = document.createElement("label");
+      newLabel.className = "block text-lg font-medium mb-2";
+      newLabel.setAttribute("for", `number-${inputCount}`);
+      newLabel.innerText = `Número ${inputCount}:`;
+
+      const newInput = document.createElement("input");
+      newInput.type = "number";
+      newInput.id = `number-${inputCount}`;
+      newInput.className = "w-full p-2 border rounded mb-4 number-input outline-none focus:ring-2 focus:ring-green-600";
+      newInput.placeholder = "Ejemplo: 629.5666666666666";
+
+      inputContainer.appendChild(newLabel);
+      inputContainer.appendChild(newInput);
+      newInput.focus();
+    }
+
+    function roundNumbers() {
+      const inputs = document.querySelectorAll(".number-input");
+      try {
+        const numbers = Array.from(inputs).map(input => parseFloat(input.value.trim())).filter(num => !isNaN(num));
+        if (numbers.length > 0) {
+          const roundedNumbers = numbers.map(num => roundToSignificantFigures(num));
+          document.getElementById("result").innerHTML = `Resultados redondeados:<br>${roundedNumbers.map((num, index) => `<strong>Número ${index + 1}:</strong> ${num}`).join("<br>")}`;
+        } else {
+          document.getElementById("result").innerText = "Por favor, ingrese al menos un valor numérico válido.";
+        }
+      } catch (error) {
+        document.getElementById("result").innerText = "Por favor, ingrese valores numéricos válidos.";
+      }
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && event.shiftKey) {
+        event.preventDefault();
+        addInput();
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        roundNumbers();
+      }
+    });
+  </script>
+</body>
+
+
+</html>
